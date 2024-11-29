@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ProductDto } from 'src/modules/product/dto/product-dto';
 import { ProductService } from 'src/modules/product/product.service';
@@ -13,8 +13,23 @@ export class ProductController {
     return this.productService.createProduct(product);
   }
 
+  @Get()
+  getProducts() {
+    return this.productService.findAll();
+  }
+
+  @Get('/deleted')
+  getProductsDeleted() {
+    return this.productService.findAllDeleted();
+  }
+
   @Get('/:id')
   getProductById(@Param('id') id: number) {
     return this.productService.findProduct(id);
+  }
+
+  @Put()
+  updateProduct(@Body() product: ProductDto) {
+    return this.productService.updateProduct(product);
   }
 }
