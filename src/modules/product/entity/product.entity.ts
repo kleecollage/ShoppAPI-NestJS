@@ -14,6 +14,6 @@ export class Product {
   @Column({ type: Number, nullable: false, default: 0 })
   stock!: number;
 
-  @Column({ type: Number, nullable: false, default: false })
+  @Column({ type: Boolean, nullable: false, default: false })
   deleted?: boolean;
 }
