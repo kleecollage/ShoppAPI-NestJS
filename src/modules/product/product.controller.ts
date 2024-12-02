@@ -8,7 +8,13 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ProductDto } from 'src/modules/product/dto/product-dto';
 import { StockDto } from 'src/modules/product/dto/stock-dto';
 import { ProductService } from 'src/modules/product/product.service';
@@ -44,6 +50,14 @@ export class ProductController {
       },
     },
   })
+  @ApiResponse({
+    status: 201,
+    description: 'Product created successfully',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Product already exists',
+  })
   createProduct(@Body() product: ProductDto) {
     return this.productService.createProduct(product);
   }
@@ -51,6 +65,10 @@ export class ProductController {
   @Get()
   @ApiOperation({
     description: 'Obtains all non deleted products',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the requested information',
   })
   getProducts() {
     return this.productService.findAll();
@@ -60,6 +78,10 @@ export class ProductController {
   @ApiOperation({
     description: 'Obtains all deleted products',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the requested information',
+  })
   getProductsDeleted() {
     return this.productService.findAllDeleted();
   }
@@ -67,6 +89,10 @@ export class ProductController {
   @Get('/:id')
   @ApiOperation({
     description: 'Obtains one product trought his ID',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the requested information',
   })
   getProductById(@Param('id') id: number) {
     return this.productService.findProduct(id);
@@ -106,6 +132,10 @@ export class ProductController {
       },
     },
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Has been updated successfully',
+  })
   updateProduct(@Body() product: ProductDto) {
     return this.productService.updateProduct(product);
   }
@@ -121,6 +151,16 @@ export class ProductController {
     description: 'Product ID',
     type: Number,
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Has been deleted successfully',
+  })
+  @ApiResponse({
+    status: 409,
+    description: /* html */ `Product not exists. <br/>
+      Product status is deleted: true.<br/>
+    `,
+  })
   deleteProduct(@Param('id') id: number) {
     return this.productService.softDelete(id);
   }
@@ -134,6 +174,16 @@ export class ProductController {
     required: true,
     description: 'Product ID',
     type: Number,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Selected product has been restored successfully',
+  })
+  @ApiResponse({
+    status: 409,
+    description: /* html */ `Product not exists. <br/>
+      Product status is deleted: false.<br/>
+    `,
   })
   restoreProduct(@Param('id') id: number) {
     return this.productService.restoreProduct(id);
@@ -160,6 +210,16 @@ export class ProductController {
         },
       },
     },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Stock has been updated successfully',
+  })
+  @ApiResponse({
+    status: 409,
+    description: /* html */ `Product not exists. <br/>
+      Product status is deleted: true.<br/>
+    `,
   })
   updateStock(@Body() stock: StockDto) {
     return this.productService.updateStock(stock);
@@ -188,6 +248,16 @@ export class ProductController {
       },
     },
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Stock has been incremented successfully',
+  })
+  @ApiResponse({
+    status: 409,
+    description: /* html */ `Product not exists. <br/>
+      Product status is deleted: true.<br/>
+    `,
+  })
   incrementStock(@Body() stock: StockDto) {
     return this.productService.incrementStock(stock);
   }
@@ -214,6 +284,16 @@ export class ProductController {
         },
       },
     },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Stock has been decremented successfully',
+  })
+  @ApiResponse({
+    status: 409,
+    description: /* html */ `Product not exists. <br/>
+      Product status is deleted: true.<br/>
+    `,
   })
   decrementStock(@Body() stock: StockDto) {
     return this.productService.decrementStock(stock);
