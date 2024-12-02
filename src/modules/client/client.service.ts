@@ -15,19 +15,21 @@ export class ClientService {
     private addressRepository: Repository<Address>,
   ) {}
 
+  //** ------------------------------ FIND CLIENT ------------------------------ **//
   findClient(client: Client) {
     return this.clientRepository.findOne({
       where: [{ id: client.id }, { email: client.email }],
     });
   }
 
+  //** ------------------------------ FIND CLIENT BY EMAIL ------------------------------ **//
   findClientByEmail(email: string) {
     return this.clientRepository.findOne({
       where: { email },
     });
   }
 
-  //** ------------------------------ GEL ALL CLIENTS ------------------------------ **//
+  //** ------------------------------ GET ALL CLIENTS ------------------------------ **//
   getClients() {
     return this.clientRepository.find();
   }
