@@ -21,6 +21,25 @@ export class ClientService {
     });
   }
 
+  findClientByEmail(email: string) {
+    return this.clientRepository.findOne({
+      where: { email },
+    });
+  }
+
+  //** ------------------------------ GEL ALL CLIENTS ------------------------------ **//
+  getClients() {
+    return this.clientRepository.find();
+  }
+
+  //** ------------------------------ GET CLIENT BY ID ------------------------------ **//
+  getClientById(id: number) {
+    return this.clientRepository.findOne({
+      where: { id },
+    });
+  }
+
+  //** ------------------------------ CREATE CLIENT ------------------------------ **//
   async createClient(client: ClientDto) {
     const clientExists = await this.findClient(client);
 
@@ -57,5 +76,83 @@ export class ClientService {
     }
 
     return this.clientRepository.save(client);
+  }
+
+  //** ------------------------------ UPDATE CLIENT ------------------------------ **//
+  async updateClient(client: ClientDto) {
+    if (!client.id) return this.createClient(client);
+
+    let clientExists = await this.findClientByEmail(client.email);
+
+    if (clientExists && clientExists.id != client.id) {
+      throw new ConflictException(
+        `This email already existst: ${client.email}`,
+      );
+    }
+
+    clientExists = await this.getClientById(client.id);
+
+    let addressExists: Address = null;
+    let deleteAddress = false;
+    if (client.address.id) {
+      addressExists = await this.addressRepository.findOne({
+        where: {
+          id: client.address.id,
+        },
+      });
+
+      if (addressExists && addressExists.id != clientExists.address.id) {
+        throw new ConflictException('This address already exists');
+      } else if (
+        JSON.stringify(addressExists) != JSON.stringify(client.address)
+      ) {
+        addressExists = await this.addressRepository.findOne({
+          where: {
+            country: client.address.country,
+            province: client.address.province,
+            town: client.address.town,
+            street: client.address.street,
+          },
+        });
+
+        if (addressExists)
+          throw new ConflictException('This address already exists');
+        else deleteAddress = true;
+      }
+    } else {
+      addressExists = await this.addressRepository.findOne({
+        where: {
+          country: client.address.country,
+          province: client.address.province,
+          town: client.address.town,
+          street: client.address.street,
+        },
+      });
+
+      if (addressExists)
+        throw new ConflictException('This address already exists');
+      else deleteAddress = true;
+    }
+
+    if (deleteAddress && clientExists)
+      await this.addressRepository.delete({ id: clientExists.address.id });
+
+    return await this.clientRepository.save(client);
+  }
+
+  //** ------------------------------ DELETE CLIENT ------------------------------ **//
+  async deleteClient(id: number) {
+    const clientExists = await this.getClientById(id);
+
+    if (!clientExists) {
+      throw new ConflictException(`Client with ID: ${id} not exists`);
+    }
+
+    const rows = await this.clientRepository.delete({ id });
+    if (rows.affected == 1) {
+      await this.addressRepository.delete({ id: clientExists.address.id });
+    }
+
+    return rows.affected == 1;
   }
 }
