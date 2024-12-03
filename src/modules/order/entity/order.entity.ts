@@ -1,7 +1,12 @@
+import { Client } from 'src/modules/client/entity/client.entity';
+import { Product } from 'src/modules/product/entity/product.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -12,11 +17,18 @@ export class Order {
   id?: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt?: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt?: Date;
 
   @Column({ type: Date, nullable: true })
   confirmAt: Date;
+
+  @ManyToOne(() => Client, (client) => client.order)
+  client!: Client;
+
+  @ManyToMany(() => Product)
+  @JoinTable({ name: 'order_products' })
+  products: Product[];
 }

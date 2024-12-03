@@ -1,5 +1,14 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsOptional, IsUUID } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsDate,
+  IsNotEmpty,
+  IsOptional,
+  IsUUID,
+} from 'class-validator';
+import { ClientDto } from 'src/modules/client/dto/client-dto';
+import { ProductDto } from 'src/modules/product/dto/product-dto';
 
 export class OrderDto {
   @IsOptional()
@@ -20,4 +29,14 @@ export class OrderDto {
   @IsDate()
   @Type(() => Date)
   confirmAt?: Date;
+
+  @IsNotEmpty()
+  @Type(() => ClientDto)
+  client!: ClientDto;
+
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayNotEmpty()
+  @Type(() => ProductDto)
+  products!: ProductDto[];
 }

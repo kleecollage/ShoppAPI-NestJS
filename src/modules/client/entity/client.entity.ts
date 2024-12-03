@@ -1,8 +1,10 @@
 import { Address } from 'src/modules/client/entity/address.entity';
+import { Order } from 'src/modules/order/entity/order.entity';
 import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -26,4 +28,7 @@ export class Client {
   })
   @JoinColumn()
   address!: Address;
+
+  @OneToMany(() => Order, (order) => order.client)
+  order?: Order;
 }
