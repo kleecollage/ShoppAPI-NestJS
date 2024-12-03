@@ -14,7 +14,7 @@ import { ProductDto } from 'src/modules/product/dto/product-dto';
 export class OrderDto {
   @ApiProperty({
     name: 'id',
-    type: Number,
+    type: String,
     required: false,
     description: 'Order ID (UUID)',
   })
@@ -67,8 +67,7 @@ export class OrderDto {
 
   @ApiProperty({
     name: 'product',
-    type: ProductDto,
-    isArray: true,
+    type: [ProductDto],
     required: true,
     description: 'Products of the order',
   })

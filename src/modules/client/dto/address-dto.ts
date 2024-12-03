@@ -27,7 +27,7 @@ export class AddressDto {
   })
   @IsNotEmpty()
   @IsString()
-  counrty!: string;
+  country!: string;
 
   @ApiProperty({
     name: 'province',
