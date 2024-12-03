@@ -16,7 +16,7 @@ export class ProductService {
 
   async createProduct(product: ProductDto) {
     const productExists: ProductDto = await this.findProduct(product.id);
-    if (productExists) {
+    if (productExists && product.id !== undefined) {
       throw new ConflictException(
         `Product whit id: ${product.id} already exists`,
       );
