@@ -31,7 +31,7 @@ export class ProductDto {
   name!: string;
 
   @ApiProperty({
-    name: 'proce',
+    name: 'price',
     required: true,
     description: 'Product price',
     type: Number,
