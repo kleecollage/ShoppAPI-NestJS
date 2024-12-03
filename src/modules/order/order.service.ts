@@ -10,6 +10,7 @@ import {
   MoreThanOrEqual,
   Not,
   Repository,
+  UpdateResult,
 } from 'typeorm';
 
 @Injectable()
@@ -58,8 +59,6 @@ export class OrderService {
 
   async getConfirmedOrders(start: Date, end: Date) {
     if (start || end) {
-      console.log('start: ' + start);
-      console.log('end: ' + end);
       const query = this.orderRepository
         .createQueryBuilder('order')
         .leftJoinAndSelect('order.client', 'client')
@@ -76,6 +75,8 @@ export class OrderService {
         end.setSeconds(59);
         end.setMilliseconds(999);
         query.andWhere({ confirmAt: LessThanOrEqual(end) });
+        console.log('start: ' + start);
+        console.log('end: ' + end);
       }
 
       return await query.getMany();
@@ -85,5 +86,32 @@ export class OrderService {
         order: { confirmAt: 'DESC' },
       });
     }
+  }
+
+  async confirmOrder(id: string) {
+    const orderExists = await this.getOrderById(id);
+
+    if (!orderExists)
+      throw new ConflictException(`Order with ID: ${id} not exists`);
+
+    if (orderExists.confirmAt)
+      throw new ConflictException(`Order with ID: ${id} is already confirmed`);
+
+    const rows: UpdateResult = await this.orderRepository.update(
+      { id },
+      { confirmAt: new Date() },
+    );
+
+    return rows.affected == 1;
+  }
+
+  getOrdersByClient(idClient: number) {
+    return this.orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.client', 'client')
+      .leftJoinAndSelect('order.products', 'product')
+      .where('client.id = :idClient', { idClient })
+      .orderBy('order.confirmAt')
+      .getMany();
   }
 }

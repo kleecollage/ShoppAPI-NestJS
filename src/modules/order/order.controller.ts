@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { OrderDto } from 'src/modules/order/dto/order-dto';
 import { OrderService } from 'src/modules/order/order.service';
 import { ParseDatePipe } from 'src/pipes/parse-date.pipe';
@@ -28,5 +36,15 @@ export class OrderController {
   @Get('/:id')
   getOrderById(@Param('id') id: string) {
     return this.orderService.getOrderById(id);
+  }
+
+  @Get('/client/:id')
+  getOrdersByClient(@Param('id') id: number) {
+    return this.orderService.getOrdersByClient(id);
+  }
+
+  @Patch('/confirm/:id')
+  confirmOrder(@Param('id') id: string) {
+    return this.orderService.confirmOrder(id);
   }
 }
