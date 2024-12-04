@@ -21,14 +21,14 @@ export class Client {
   email!: string;
 
   @OneToOne(() => Address, {
-    cascade: ['insert', 'update', 'remove'], // with 1:1 remove in cascade it's not working
+    cascade: ['insert', 'update'], // with 1:1 remove in cascade it's not working
     eager: true, //eager return the relationed data
-    onUpdate: 'CASCADE',
     onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
   })
   @JoinColumn()
   address!: Address;
 
   @OneToMany(() => Order, (order) => order.client)
-  order?: Order;
+  orders?: Order[];
 }

@@ -136,7 +136,7 @@ export class ClientService {
       else deleteAddress = true;
     }
 
-    if (deleteAddress && clientExists)
+    if (deleteAddress)
       await this.addressRepository.delete({ id: clientExists.address.id });
 
     return await this.clientRepository.save(client);

@@ -25,7 +25,7 @@ export class Order {
   @Column({ type: Date, nullable: true })
   confirmAt: Date;
 
-  @ManyToOne(() => Client, (client) => client.order, { eager: true })
+  @ManyToOne(() => Client, (client) => client.orders, { eager: true })
   client!: Client;
 
   @ManyToMany(() => Product, { eager: true })
